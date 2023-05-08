@@ -3,8 +3,9 @@ package sk.stuba.fei.uim.oop.assignment3.cart.web.bodies;
 import lombok.Getter;
 import lombok.Setter;
 import sk.stuba.fei.uim.oop.assignment3.cart.data.Cart;
-import sk.stuba.fei.uim.oop.assignment3.product.web.bodies.ProductResponse;
+import sk.stuba.fei.uim.oop.assignment3.product.data.Product;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -12,13 +13,14 @@ import java.util.stream.Collectors;
 @Setter
 public class CartResponse {
     private long id;
-    private List<ProductResponse> shoppingCart;
+    private List<CartItemResponse> shoppingCart;
     private boolean payed;
 
     public CartResponse(Cart cart){
-        //TODO create schema to return product ID and Amount
         this.id = cart.getId();
-        this.shoppingCart = cart.getShoppingList().stream().map(ProductResponse::new).collect(Collectors.toList());
+        //TODO
+        //this.shoppingCart = convertToCartItemResponses(cart.getShoppingList());
         this.payed = cart.isPayed();
     }
+
 }
