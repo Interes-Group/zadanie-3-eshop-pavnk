@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sk.stuba.fei.uim.oop.assignment3.product.logic.IProductService;
 import sk.stuba.fei.uim.oop.assignment3.product.web.bodies.Amount;
+import sk.stuba.fei.uim.oop.assignment3.product.web.bodies.ProductEditRequest;
 import sk.stuba.fei.uim.oop.assignment3.product.web.bodies.ProductRequest;
 import sk.stuba.fei.uim.oop.assignment3.product.web.bodies.ProductResponse;
 import sk.stuba.fei.uim.oop.assignment3.exception.NotFoundException;
@@ -34,7 +35,7 @@ public class ProductController {
         return this.service.getAllProducts().stream().map(ProductResponse::new).collect(Collectors.toList());
     }
     @GetMapping(value="/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ProductResponse getBook(@PathVariable("id") Long productId) throws NotFoundException {
+    public ProductResponse getProduct(@PathVariable("id") Long productId) throws NotFoundException {
         return new ProductResponse(this.service.getByProductId(productId));
     }
     @GetMapping(value = "/{id}/amount", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -42,7 +43,7 @@ public class ProductController {
         return new Amount(this.service.getAmount(productId));
     }
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ProductResponse updateProduct(@PathVariable("id") Long productId, @RequestBody ProductRequest body) throws NotFoundException {
+    public ProductResponse updateProduct(@PathVariable("id") Long productId, @RequestBody ProductEditRequest body) throws NotFoundException {
         return new ProductResponse(this.service.update(productId, body));
     }
     @DeleteMapping(value = "/{id}")
