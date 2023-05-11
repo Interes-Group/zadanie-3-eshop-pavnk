@@ -58,4 +58,8 @@ public class ProductService implements IProductService {
         this.repository.save(p);
         return p.getAmount();
     }
+    @Override
+    public void saveProduct(Product product) {
+        this.repository.save(product);
+    }
 }

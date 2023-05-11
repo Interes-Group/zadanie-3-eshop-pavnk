@@ -3,24 +3,33 @@ package sk.stuba.fei.uim.oop.assignment3.cart.web.bodies;
 import lombok.Getter;
 import lombok.Setter;
 import sk.stuba.fei.uim.oop.assignment3.cart.data.Cart;
+import sk.stuba.fei.uim.oop.assignment3.cart_item.data.CartItem;
+import sk.stuba.fei.uim.oop.assignment3.cart_item.web.bodies.CartItemResponse;
 import sk.stuba.fei.uim.oop.assignment3.product.data.Product;
+import sk.stuba.fei.uim.oop.assignment3.product.web.bodies.ProductResponse;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Getter
 @Setter
 public class CartResponse {
     private long id;
-    private List<CartItemResponse> shoppingCart;
+    private List<CartItemResponse> shoppingList;
     private boolean payed;
 
-    public CartResponse(Cart cart){
+    public CartResponse(Cart cart) {
         this.id = cart.getId();
-        //TODO
-        //this.shoppingCart = convertToCartItemResponses(cart.getShoppingList());
+        this.shoppingList = convertToCartItemResponses(cart.getShoppingList());
         this.payed = cart.isPayed();
     }
 
+    private List<CartItemResponse> convertToCartItemResponses(List<CartItem> cartItems) {
+        List<CartItemResponse> itemResponses = new ArrayList<>();
+        for (CartItem cartItem : cartItems) {
+            CartItemResponse cartItemResponse = new CartItemResponse(cartItem.getProduct().getId(), cartItem.getAmount());
+            itemResponses.add(cartItemResponse);
+        }
+        return itemResponses;
+    }
 }

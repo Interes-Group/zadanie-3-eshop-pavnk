@@ -4,11 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import sk.stuba.fei.uim.oop.assignment3.cart.data.Cart;
 import sk.stuba.fei.uim.oop.assignment3.cart.data.ICartRepository;
+import sk.stuba.fei.uim.oop.assignment3.cart_item.data.CartItem;
+import sk.stuba.fei.uim.oop.assignment3.cart_item.logic.ICartItemService;
+import sk.stuba.fei.uim.oop.assignment3.cart_item.web.bodies.CartAddRequest;
 import sk.stuba.fei.uim.oop.assignment3.exception.IllegalOperationException;
 import sk.stuba.fei.uim.oop.assignment3.exception.NotFoundException;
 import sk.stuba.fei.uim.oop.assignment3.product.data.Product;
 import sk.stuba.fei.uim.oop.assignment3.product.logic.IProductService;
-import sk.stuba.fei.uim.oop.assignment3.product.web.bodies.ProductIdAmountRequest;
 
 @Service
 public class CartService implements ICartService {
@@ -16,6 +18,8 @@ public class CartService implements ICartService {
     private ICartRepository repository;
     @Autowired
     private IProductService productService;
+    @Autowired
+    private ICartItemService cartItemService;
     @Override
     public Cart create() {
         return this.repository.save(new Cart());
@@ -33,17 +37,41 @@ public class CartService implements ICartService {
         this.repository.delete(this.getById(id));
     }
     @Override
-    public Cart addToCart(long id, ProductIdAmountRequest body) throws NotFoundException, IllegalOperationException {
+    public Cart addToCart(long id, CartAddRequest body) throws NotFoundException, IllegalOperationException {
         Cart c = this.getIfNotPayed(id);
         Product p = this.productService.getByProductId(body.getProductId());
-        if(p.getAmount() == 0){
-            throw new IllegalOperationException();
+        boolean itemExists = false;
+        CartItem i = null;
+        for (CartItem cartItem : c.getShoppingList()) {
+            if (cartItem.getProduct().getId() == body.getProductId()) {
+                itemExists = true;
+                i = cartItem;
+                break;
+            }
         }
-        if(!c.getShoppingList().contains(p)){
-            c.getShoppingList().add(p);
+        if (itemExists) {
+            if(p.getAmount()<body.getAmount()){
+                throw new IllegalOperationException();
+            } else {
+                i.setAmount(i.getAmount()+ body.getAmount());
+                p.setAmount(p.getAmount()- body.getAmount());
+                this.cartItemService.saveCartItem(i);
+                this.productService.saveProduct(p);
+            }
         } else {
-            p.setAmount(p.getAmount()-body.getAmount());
+            if(p.getAmount()<body.getAmount()){
+                throw new IllegalOperationException();
+            } else {
+                CartItem newCartItem = new CartItem();
+                newCartItem.setProduct(p);
+                newCartItem.setAmount(body.getAmount());
+                p.setAmount(p.getAmount()- body.getAmount());
+                this.productService.saveProduct(p);
+                c.getShoppingList().add(newCartItem);
+                this.cartItemService.saveCartItem(newCartItem);
+            }
         }
+
         return this.repository.save(c);
     }
     private Cart getIfNotPayed(long id) throws NotFoundException, IllegalOperationException {
