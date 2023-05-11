@@ -16,7 +16,7 @@ public class ProductService implements IProductService {
     @Autowired
     private IProductRepository repository;
     @Override
-    public Product create(ProductRequest request) throws NotFoundException {
+    public Product create(ProductRequest request) {
         return this.repository.save(new Product(request));
     }
     @Override

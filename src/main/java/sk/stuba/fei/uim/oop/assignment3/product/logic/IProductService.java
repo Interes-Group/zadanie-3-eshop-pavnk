@@ -9,7 +9,7 @@ import sk.stuba.fei.uim.oop.assignment3.exception.NotFoundException;
 import java.util.List;
 
 public interface IProductService {
-    Product create(ProductRequest request) throws NotFoundException;
+    Product create(ProductRequest request);
     List<Product> getAllProducts();
     Product getByProductId(long id) throws NotFoundException;
     Product update(long id, ProductEditRequest request) throws NotFoundException;

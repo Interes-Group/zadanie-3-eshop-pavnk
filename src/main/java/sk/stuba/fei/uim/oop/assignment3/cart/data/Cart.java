@@ -2,7 +2,6 @@ package sk.stuba.fei.uim.oop.assignment3.cart.data;
 
 import lombok.Data;
 import sk.stuba.fei.uim.oop.assignment3.cart_item.data.CartItem;
-import sk.stuba.fei.uim.oop.assignment3.product.data.Product;
 
 import javax.persistence.*;
 import java.util.ArrayList;

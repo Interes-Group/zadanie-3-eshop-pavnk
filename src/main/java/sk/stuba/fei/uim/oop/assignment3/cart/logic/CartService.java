@@ -6,11 +6,14 @@ import sk.stuba.fei.uim.oop.assignment3.cart.data.Cart;
 import sk.stuba.fei.uim.oop.assignment3.cart.data.ICartRepository;
 import sk.stuba.fei.uim.oop.assignment3.cart_item.data.CartItem;
 import sk.stuba.fei.uim.oop.assignment3.cart_item.logic.ICartItemService;
-import sk.stuba.fei.uim.oop.assignment3.cart_item.web.bodies.CartAddRequest;
+import sk.stuba.fei.uim.oop.assignment3.cart.web.bodies.CartAddRequest;
 import sk.stuba.fei.uim.oop.assignment3.exception.IllegalOperationException;
 import sk.stuba.fei.uim.oop.assignment3.exception.NotFoundException;
 import sk.stuba.fei.uim.oop.assignment3.product.data.Product;
 import sk.stuba.fei.uim.oop.assignment3.product.logic.IProductService;
+
+import java.util.Objects;
+
 
 @Service
 public class CartService implements ICartService {
@@ -43,7 +46,7 @@ public class CartService implements ICartService {
         boolean itemExists = false;
         CartItem i = null;
         for (CartItem cartItem : c.getShoppingList()) {
-            if (cartItem.getProduct().getId() == body.getProductId()) {
+            if (Objects.equals(cartItem.getProduct().getId(), body.getProductId())) {
                 itemExists = true;
                 i = cartItem;
                 break;
@@ -73,6 +76,27 @@ public class CartService implements ICartService {
         }
 
         return this.repository.save(c);
+    }
+
+    @Override
+    public double payCart(long id) throws NotFoundException, IllegalOperationException {
+        Cart cart = getIfNotPayed(id);
+        if (cart.isPayed()) {
+            throw new IllegalOperationException();
+        }
+        cart.setPayed(true);
+        repository.save(cart);
+
+        return calculateCartPrice(cart);
+    }
+    private double calculateCartPrice(Cart cart) {
+        double totalPrice = 0.0;
+        for (CartItem cartItem : cart.getShoppingList()) {
+            double productPrice = cartItem.getProduct().getPrice();
+            int quantity = cartItem.getAmount();
+            totalPrice += productPrice * quantity;
+        }
+        return totalPrice;
     }
     private Cart getIfNotPayed(long id) throws NotFoundException, IllegalOperationException {
         Cart c = this.getById(id);

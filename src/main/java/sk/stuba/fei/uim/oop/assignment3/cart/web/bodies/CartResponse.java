@@ -5,8 +5,6 @@ import lombok.Setter;
 import sk.stuba.fei.uim.oop.assignment3.cart.data.Cart;
 import sk.stuba.fei.uim.oop.assignment3.cart_item.data.CartItem;
 import sk.stuba.fei.uim.oop.assignment3.cart_item.web.bodies.CartItemResponse;
-import sk.stuba.fei.uim.oop.assignment3.product.data.Product;
-import sk.stuba.fei.uim.oop.assignment3.product.web.bodies.ProductResponse;
 
 import java.util.ArrayList;
 import java.util.List;

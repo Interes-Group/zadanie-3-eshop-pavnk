@@ -23,7 +23,7 @@ public class ProductController {
     private IProductService service;
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ProductResponse> addProduct(@RequestBody ProductRequest body) throws NotFoundException {
+    public ResponseEntity<ProductResponse> addProduct(@RequestBody ProductRequest body) {
         return new ResponseEntity<>(new ProductResponse(this.service.create(body)), HttpStatus.CREATED);
     }
     @PostMapping(value = "/{id}/amount", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -31,10 +31,10 @@ public class ProductController {
         return new Amount(this.service.addAmount(productId, body.getAmount()));
     }
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<ProductResponse> getAllProducts() throws NotFoundException {
+    public List<ProductResponse> getAllProducts() {
         return this.service.getAllProducts().stream().map(ProductResponse::new).collect(Collectors.toList());
     }
-    @GetMapping(value="/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value="/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ProductResponse getProduct(@PathVariable("id") Long productId) throws NotFoundException {
         return new ProductResponse(this.service.getByProductId(productId));
     }
